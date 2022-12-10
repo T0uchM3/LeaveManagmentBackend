@@ -27,7 +27,9 @@ class Leave(models.Model):
     enddate = models.DateTimeField(auto_now_add=True,blank=True)
     days = models.IntegerField(max_length=50,default=0)
     leavetype = models.CharField(max_length=100,default="")
-    reason = models.CharField(max_length=100,default="")
+    userid = models.IntegerField(max_length=50,default=0)
+    status = models.CharField(max_length=100,default="")
+
     def __int__(self):
         return self.id
 

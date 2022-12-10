@@ -32,9 +32,6 @@ class AccountView(APIView):
         is_admin = request.data.get('is_admin')
         userGender = request.data.get('gender')
 
-
-        #leave = self.createLeave(userGender)
-        #print("leave ",leave)
         if(userGender == "male"):
             serializer_data = {
                     "username":userFirstname + userLasname,
@@ -77,36 +74,92 @@ class AccountView(APIView):
             })
     def get(self,request):
       return Response({
-                'status': 'good???',
-               })
+            'status': 'good???',
+      })
     @staticmethod
     @api_view(['POST'])
     def addleave(request):
         startDate = request.data.get("startdate")
         endtDate = request.data.get("enddate")
         leaveType = request.data.get("leavetype")
-        leaveDay = request.data.get("days")
-        leaveReason = request.data.get("reason")
-        serializer_data = {}
+        leaveDays = request.data.get("days")
+        userID = request.data.get("userid")
 
+        serializer_data = {}
+        try:
+            user = CustomUser.objects.get(id=userID)
+
+            if(leaveType == "paid" and user.paid < int(leaveDays)):
+               return Response({'lowdays': 'The days you selected are more than your available paid days',})
+            if(leaveType == "paternity" and user.paternity < int(leaveDays)):
+                return Response({'lowdays': 'The days you selected are  more than your available paternity days',})
+            if(leaveType == "maternity" and user.maternity < int(leaveDays)):
+                return Response({'lowdays': 'The days you selected are  more than your available maternity days',})
+            if(leaveType == "rtt" and user.rtt < int(leaveDays)):
+                return Response({'lowdays': 'The days you selected are  more than your available rtt days',})
+           
+        except:
+             return Response({
+                'nouser': 'no user with this id exist',
+            })
+        
         serializer_data = {
                 "startdate":datetime.now(),
                 "enddate":datetime.now(),
                 "leavetype":leaveType,
-                "days":leaveDay,
-                "reason":leaveReason,
+                "days":leaveDays,
+                "userid":userID,
+                "status":"pending",
         }
  
         print(serializer_data)
         serializer = LeaveSerializer(data=serializer_data)
         if serializer.is_valid():
             serializer.save()
-            print("LEAVE SAVED")
+            return Response(serializer.data)
         else:
-            print(serializer.errors)
-            print("LEAVE NNNOOOOTT  SAVED")
-        lastInstance = Leave.objects.last()
-        return lastInstance
+            return Response({
+                'status': 'error',
+                'agrs':serializer.errors,
+                'json_result':json_result,
+            })
+
+    @staticmethod
+    @api_view(['GET'])
+    def getuserleaves(request):
+        userID = request.GET.get('id')
+        leaves = Leave.objects.filter(userid=userID)
+        serializer = LeaveSerializer(leaves, many=True)
+        return Response(serializer.data)
+
+    @staticmethod
+    @api_view(['GET'])
+    def getallleaves(request):
+        leaves = Leave.objects.filter()
+        serializer = LeaveSerializer(leaves, many=True)
+        return Response(serializer.data)
+
+    @staticmethod
+    @api_view(['POST'])
+    def updateleave(request):
+        status = request.data.get("status")
+        leaveID = request.data.get("leaveid")
+        leave = Leave.objects.filter(id=leaveID).first()
+        data = {
+            "status": status,
+            }
+        if status not in ("pending", "approved","canceled"):
+             return Response({'wrongstatus': 'status must be either pending or approved or canceled', })
+              
+        serializer = LeaveSerializer(leave,data=data,partial=True)
+        if serializer.is_valid():
+               serializer.save()
+               return Response(serializer.data)
+        else:
+             return Response({
+                'status': 'error',
+                'agrs':serializer.errors,
+            })
 
 
    ### TODO:
