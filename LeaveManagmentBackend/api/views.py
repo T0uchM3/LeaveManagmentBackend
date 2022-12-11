@@ -67,9 +67,10 @@ class AccountView(APIView):
                 'agrs':serializer.errors,
             })
     def get(self,request):
-      return Response({
-            'status': 'good???',
-      })
+        users = CustomUser.objects.filter()
+        serializer = CustomUserSerializer(users, many=True)
+        return Response(serializer.data)
+
     @staticmethod
     @api_view(['POST'])
     def addleave(request):
