@@ -1,5 +1,3 @@
-from pickletools import long1
-from numpy import dtype
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializer import LeaveSerializer
@@ -10,13 +8,9 @@ from .models import Leave, CustomUser
 
 import urllib.request
 import json
-import cloudinary.uploader
 import requests
 import json
 import urllib.request
-import os
-import numpy as np
-from datetime import datetime
 from rest_framework.decorators import action
 from rest_framework.decorators import api_view
 

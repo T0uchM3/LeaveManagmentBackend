@@ -26,13 +26,13 @@ SECRET_KEY = '237a580f-f1bb-4a83-9656-98f9e4d9fd30'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','leavemanagmentbackend-production.up.railway.app']
 
 # Application references
 # https://docs.djangoproject.com/en/2.1/ref/settings/#std:setting-INSTALLED_APPS
 INSTALLED_APPS = [
     # Add your apps here to enable them
-
+    'api',
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'api',
+    
 ]
 
 # Middleware framework
