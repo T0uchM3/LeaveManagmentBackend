@@ -15,21 +15,22 @@ class CustomUser(AbstractUser):
     is_admin = models.BooleanField(default=False)
     #leaveid = models.ForeignKey('Leave', on_delete=models.CASCADE)
     gender = models.CharField(max_length=50)
-    paternity = models.IntegerField(max_length=50,default=0)
-    maternity = models.IntegerField(max_length=50,default=0)
-    paid = models.IntegerField(max_length=50,default=30)
-    rtt = models.IntegerField(max_length=50,default=0)
+    paternity = models.IntegerField(default=0)
+    maternity = models.IntegerField(default=0)
+    paid = models.IntegerField(default=30)
+    rtt = models.IntegerField(default=0)
+    id = models.AutoField(primary_key=True)
     def __int__(self):
         return self.id
 
 class Leave(models.Model):
     startdate= models.DateTimeField(auto_now_add=True,blank=True)
     enddate = models.DateTimeField(auto_now_add=True,blank=True)
-    days = models.IntegerField(max_length=50,default=0)
+    days = models.IntegerField(default=0)
     leavetype = models.CharField(max_length=100,default="")
-    userid = models.IntegerField(max_length=50,default=0)
+    userid = models.IntegerField(default=0)
     status = models.CharField(max_length=100,default="")
-
+    id = models.AutoField(primary_key=True)
     def __int__(self):
         return self.id
 

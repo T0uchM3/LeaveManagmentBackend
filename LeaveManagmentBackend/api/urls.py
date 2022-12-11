@@ -7,4 +7,5 @@ urlpatterns = [path("account/", AccountView.as_view()),
 	path('account/addleave/', AccountView.addleave),
 	path('account/getuserleaves/', AccountView.getuserleaves),
 	path('account/getallleaves/', AccountView.getallleaves),
-	path('account/updateleave/', AccountView.updateleave),]
+	path('account/updateleave/', AccountView.updateleave),
+	path('account/deleteleave/', AccountView.deleteleave),]

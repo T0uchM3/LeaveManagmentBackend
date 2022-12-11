@@ -90,13 +90,13 @@ class AccountView(APIView):
             user = CustomUser.objects.get(id=userID)
 
             if(leaveType == "paid" and user.paid < int(leaveDays)):
-               return Response({'lowdays': 'The days you selected are more than your available paid days',})
+               return Response({'response': 'The days you selected are more than your available paid days',})
             if(leaveType == "paternity" and user.paternity < int(leaveDays)):
-                return Response({'lowdays': 'The days you selected are  more than your available paternity days',})
+                return Response({'response': 'The days you selected are  more than your available paternity days',})
             if(leaveType == "maternity" and user.maternity < int(leaveDays)):
-                return Response({'lowdays': 'The days you selected are  more than your available maternity days',})
+                return Response({'response': 'The days you selected are  more than your available maternity days',})
             if(leaveType == "rtt" and user.rtt < int(leaveDays)):
-                return Response({'lowdays': 'The days you selected are  more than your available rtt days',})
+                return Response({'response': 'The days you selected are  more than your available rtt days',})
            
         except:
              return Response({
@@ -104,8 +104,8 @@ class AccountView(APIView):
             })
         
         serializer_data = {
-                "startdate":datetime.now(),
-                "enddate":datetime.now(),
+                "startdate":startDate,
+                "enddate":endtDate,
                 "leavetype":leaveType,
                 "days":leaveDays,
                 "userid":userID,
@@ -116,6 +116,9 @@ class AccountView(APIView):
         serializer = LeaveSerializer(data=serializer_data)
         if serializer.is_valid():
             serializer.save()
+            return Response({
+                'response': 'leave apply successfully sent',
+            })
             return Response(serializer.data)
         else:
             return Response({
@@ -141,6 +144,22 @@ class AccountView(APIView):
 
     @staticmethod
     @api_view(['POST'])
+    def deleteleave(request):
+        leaveID = request.data.get("leaveid")
+        try:
+            leave = Leave.objects.filter(id=leaveID).first().delete()
+        except:
+             return Response({
+                'nouser': 'no user with this id exist',
+            })
+        
+        leaves = Leave.objects.filter()
+        serializer = LeaveSerializer(leaves, many=True)
+        return Response(serializer.data)
+        
+
+    @staticmethod
+    @api_view(['POST'])
     def updateleave(request):
         status = request.data.get("status")
         leaveID = request.data.get("leaveid")
@@ -148,16 +167,43 @@ class AccountView(APIView):
         data = {
             "status": status,
             }
-        if status not in ("pending", "approved","canceled"):
-             return Response({'wrongstatus': 'status must be either pending or approved or canceled', })
-              
-        serializer = LeaveSerializer(leave,data=data,partial=True)
+        if status not in ("approved","canceled"):
+             return Response({'wrongstatus': 'status must be either approved or canceled', })
+        
+        serializer = LeaveSerializer(leave,data=data,partial=True)# updating leave status
         if serializer.is_valid():
-               serializer.save()
+               serializer.save() # updating leave status
+               if status == "approved":
+                  user = CustomUser.objects.filter(id=leave.userid).first()
+                  data = {}
+                  if leave.leavetype == "paid":
+                      data = {
+                        "paid": user.paid - leave.days,
+                        }
+                  if leave.leavetype == "paternity":
+                      data = {
+                        "paternity": user.paternity - leave.days,
+                        }
+                  if leave.leavetype == "maternity":
+                       data = {
+                         "maternity": user.maternity - leave.days,
+                         }
+                  if leave.leavetype == "rtt":
+                       data = {
+                         "rtt": user.rtt - leave.days,
+                         }
+
+                  serializer = CustomUserSerializer(user,data=data,partial=True)# updating user status
+                  if serializer.is_valid():
+                      serializer.save() # updating user status
+                  return Response({
+                        'status': 'approved',
+                        'agrs':serializer.data,
+                    })
                return Response(serializer.data)
         else:
              return Response({
-                'status': 'error',
+                'status': 'serializer error',
                 'agrs':serializer.errors,
             })
 
@@ -185,12 +231,3 @@ class AccountView(APIView):
             # No user was found, return false
             response = {"login": 'false'}
         return Response(response)
-
-
-#user can create a leave instance
-#eave has "pending" attrib (True/fase)
-
-
-#get list of pending application
-#admin can open application: => get leave instance
-#agree = change pending to false;

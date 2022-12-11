@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 
 # Middleware framework
 # https://docs.djangoproject.com/en/2.1/topics/http/middleware/
-MIDDLEWARE = [
+MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -81,16 +81,19 @@ WSGI_APPLICATION = 'LeaveManagmentBackend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 DATABASES = {
-#### for localDB
+    'default':
+    dj_database_url.config(default=os.getenv('DATABASE_URL'),
+                           conn_max_age=1800)
+##### for localDB
 
-      'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'leavemanage', 
-        'USER': 'postgres',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1', 
-        'PORT': '5432',
-    }
+#      'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'leavemanage', 
+#        'USER': 'postgres',
+#        'PASSWORD': 'root',
+#        'HOST': '127.0.0.1', 
+#        'PORT': '5432',
+#    }
 }
 
 # Password validation

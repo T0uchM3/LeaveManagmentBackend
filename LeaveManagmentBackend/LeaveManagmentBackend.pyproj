@@ -20,6 +20,8 @@
     <WebBrowserUrl>http://localhost</WebBrowserUrl>
     <OutputPath>.</OutputPath>
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
+    <PythonDebugWebServerCommandEnvironment>DATABASE_URL=postgresql://postgres:pLfhG74CvFEkVheF5H7D@containers-us-west-31.railway.app:5781/railway
+API_KEY=2b10WYBTEZ1s03MrxMIYT8tTkO</PythonDebugWebServerCommandEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

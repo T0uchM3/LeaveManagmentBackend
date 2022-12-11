@@ -10,13 +10,14 @@ class LeaveSerializer(serializers.ModelSerializer):
        days = serializers.IntegerField()
        userid = serializers.IntegerField()
        status = serializers.CharField()
+       id = serializers.ReadOnlyField()
        def create(self, validated_data):
            return Leave.objects.create(**validated_data)
        class Meta:
         model = Leave
-        fields = ('startdate','enddate', 'leavetype', 'days', 'userid', 'status')
+        fields = ('startdate','enddate', 'leavetype', 'days', 'userid', 'status', 'id')
 class CustomUserSerializer(serializers.ModelSerializer):
       class Meta:
         model = CustomUser
-        fields = ('username','userfirstname', 'userlastname', 'email', 'password', 'is_admin', 'gender', 'paternity', 'maternity', 'paid', 'rtt')
+        fields = ('username','userfirstname', 'userlastname', 'email', 'password', 'is_admin', 'gender', 'paternity', 'maternity', 'paid', 'rtt', 'id')
 
