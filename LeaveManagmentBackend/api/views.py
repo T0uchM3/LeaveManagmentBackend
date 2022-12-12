@@ -156,7 +156,10 @@ class AccountView(APIView):
         
         leaves = Leave.objects.filter()
         serializer = LeaveSerializer(leaves, many=True)
-        return Response(serializer.data)
+        return Response({
+                'status': 'success',
+                'args':serializer.data,
+            })
         
 
     @staticmethod
